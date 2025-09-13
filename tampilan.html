@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: url("bg-lope.jpeg") no-repeat center center;
+      background-size: cover;
+      font-family: "Poppins", sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+
+    /* Wave Text + Glow */
+    .wave-text {
+      display: flex;
+      justify-content: center;
+      font-size: 3em;
+      font-weight: bold;
+      letter-spacing: 3px;
+      margin: 0 0 20px 0;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+
+    .wave-text span {
+      display: inline-block;
+      opacity: 2;
+    }
+
+    .wave-active span {
+      animation: fadeZoom 1s ease forwards, wave 1.5s ease-in-out, glow 2s ease-in-out alternate;
+    }
+
+    .wave-active span:nth-child(n) {
+      animation-delay: calc(0.1s * var(--i));
+    }
+
+    /* Setelah wave selesai, tetap glow pelan romantis */
+    .permanent-glow span {
+      animation: romanticGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes fadeZoom {
+      from {opacity: 0; transform: scale(0.8);}
+      to   {opacity: 1; transform: scale(1);}
+    }
+
+    @keyframes wave {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes glow {
+      from {text-shadow: 0 0 10px #ffb6c1, 0 0 20px #ff6f91;}
+      to   {text-shadow: 0 0 20px #ff4f6d, 0 0 40px #ff2d55;}
+    }
+
+    /* Glow kelap-kelip romantis */
+    @keyframes romanticGlow {
+      0%   { text-shadow: 0 0 10px #ff99cc, 0 0 20px #ff6699; }
+      50%  { text-shadow: 0 0 15px #ff3366, 0 0 30px #cc0066; }
+      100% { text-shadow: 0 0 20px #cc33ff, 0 0 40px #9900cc; }
+    }
+
+    button {
+      margin: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    button:hover { transform: scale(1.05); }
+
+    #nextBtn {
+      background: #ff4f6d;
+      color: white;
+    }
+
+    #musicBtn {
+      background: #ffffff;
+      color: #ff4f6d;
+    }
+
+    .heart {
+      position: absolute;
+      top: -10px;
+      color: rgba(255,255,255,0.8);
+      font-size: 20px;
+      animation: fall 6s linear infinite;
+    }
+
+    .balloon {
+      position: absolute;
+      bottom: -100px;
+      font-size: 30px;
+      animation: floatSpin 8s linear forwards;
+    }
+
+    @keyframes fall {
+      0% {transform: translateY(0) rotate(0);}
+      100% {transform: translateY(100vh) rotate(360deg);}
+    }
+
+    @keyframes floatSpin {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Judul Wave Text -->
+  <h1 class="wave-text" id="titleText">
+    <span style="--i:1">H</span><span style="--i:2">a</span><span style="--i:3">p</span><span style="--i:4">p</span><span style="--i:5">y</span>
+    <span style="--i:6">&nbsp;</span>
+    <span style="--i:7">B</span><span style="--i:8">i</span><span style="--i:9">r</span><span style="--i:10">t</span><span style="--i:11">h</span><span style="--i:12">d</span><span style="--i:13">a</span><span style="--i:14">y</span>
+    <span style="--i:15">,</span><span style="--i:16">&nbsp;</span>
+    <span style="--i:17">S</span><span style="--i:18">a</span><span style="--i:19">y</span><span style="--i:20">a</span><span style="--i:21">n</span><span style="--i:22">g</span><span style="--i:23">k</span><span style="--i:24">u</span>
+    <span style="--i:25">&nbsp;</span><span style="--i:26">💖</span>
+  </h1>
+
+  <button id="nextBtn">Silahkan klik 💖</button>
+  <button id="musicBtn">🎵 Play Musik</button>
+
+  <audio id="bgMusic" loop>
+    <source src="lagu_romantis.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Wave animasi langsung aktif
+    const title = document.getElementById("titleText");
+    title.classList.add("wave-active");
+
+    // Setelah wave selesai → tambahkan efek glow permanen
+    setTimeout(() => {
+      title.classList.remove("wave-active");
+      title.classList.add("permanent-glow");
+    }, 5000);
+
+    const music = document.getElementById("bgMusic");
+    const btn = document.getElementById("musicBtn");
+
+    // Tombol musik manual
+    btn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        btn.textContent = "⏸️ Pause Musik";
+      } else {
+        music.pause();
+        btn.textContent = "🎵 Play Musik";
+      }
+    });
+
+    // Autoplay setelah klik pertama kali (dimanapun)
+    document.body.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        btn.textContent = "⏸️ Pause Musik";
+      }
+    }, { once: true });
+
+    // Efek hati jatuh
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = Math.random() * 10 + 15 + "px";
+      heart.innerText = "💖";
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+    setInterval(createHeart, 500);
+
+    // Efek bunga melayang berputar
+    function createBalloon() {
+      const balloon = document.createElement("div");
+      balloon.classList.add("balloon");
+      balloon.style.left = Math.random() * 100 + "vw";
+      balloon.innerText = "🌸";
+      document.body.appendChild(balloon);
+      setTimeout(() => balloon.remove(), 8000);
+    }
+    setInterval(createBalloon, 2000);
+  </script>
+</body>
+</html>
