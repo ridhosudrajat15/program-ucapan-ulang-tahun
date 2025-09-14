@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Birthday PIN Lock (HP Style)</title>
+  <style>
+    :root{
+      --bg:#ff6f98;
+      --panel: rgba(255,255,255,0.06);
+      --panel-2: rgba(255,255,255,0.12);
+      --accent: #ff4f6d;
+      --dot-size: 14px;
+      --dot-gap: 14px;
+      --key-size: 72px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, Poppins, system-ui, -apple-system, "Segoe UI", Roboto}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,#ff9bb6 0%, #ff5c86 100%);
+      overflow:hidden;
+      padding:20px;
+      color:white;
+    }
+    .behind {
+      position:absolute; inset:0; z-index:0;
+      background: url("bg-lope.jpeg") center/cover no-repeat;
+      filter: brightness(.6);
+    }
+    .lock-wrap{
+      position:relative;
+      z-index:2;
+      width: min(420px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius: 20px;
+      padding: 28px 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      backdrop-filter: blur(8px) saturate(120%);
+      text-align:center;
+    }
+    .dots{display:flex;gap:var(--dot-gap);justify-content:center;margin:18px 0;}
+    .dot{width:var(--dot-size);height:var(--dot-size);border-radius:50%;border:2px solid rgba(255,255,255,0.5);}
+    .dot.filled{background:white;border-color:transparent;}
+    .keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;justify-items:center;margin-top:4px;}
+    .key{width:var(--key-size);height:var(--key-size);border-radius:50%;background:var(--panel-2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.25rem;color:white;}
+    .helper{display:flex;justify-content:space-between;margin-top:12px;gap:8px;}
+    .btn-ghost{padding:8px 12px;border:1px solid rgba(255,255,255,0.2);border-radius:10px;background:transparent;color:white;cursor:pointer;}
+    .msg{height:18px;margin-top:12px;font-size:0.95rem;}
+    @keyframes shake{10%,90%{transform:translateX(-6px)}20%,80%{transform:translateX(6px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+    .shake{animation:shake 560ms}
+    /* Modal umum */
+    .modal{
+      display:none;
+      position:fixed; inset:0; background:rgba(0,0,0,0.65);
+      backdrop-filter:blur(4px); z-index:10;
+      align-items:center; justify-content:center;
+    }
+    .quiz-box{
+      background:white; color:black; padding:20px;
+      border-radius:12px; width:80%; max-width:360px; text-align:center;
+    }
+    .quiz-box input{width:100%;padding:10px;margin-top:10px;border:1px solid #ccc;border-radius:8px;}
+    #quizChoices{display:none;gap:10px;margin-top:12px;justify-content:center;}
+    .quiz-msg{min-height:22px; font-size:0.9rem; margin-top:8px;}
+    .quiz-msg.error{color:#e63946;}
+    .quiz-msg.success{color:#2a9d8f;}
+    .quiz-actions{margin-top:16px;display:flex;justify-content:space-between;gap:10px;}
+    .quiz-actions button{flex:1;padding:10px;border:none;border-radius:8px;font-weight:600;cursor:pointer;}
+    .btn-cancel{background:#ccc;}
+    .btn-next{background:#ff4f6d;color:white;}
+  </style>
+</head>
+<body>
+  <div class="behind"></div>
+
+  <div class="lock-wrap" id="lockWrap">
+    <div class="lock-title">Masukkan PIN</div>
+    <div class="lock-sub">Selamat Mencoba Sayangku Cintaku 💕</div>
+
+    <div class="dots" id="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+
+    <div class="keypad">
+      <div class="key" data-key="1">1</div>
+      <div class="key" data-key="2">2</div>
+      <div class="key" data-key="3">3</div>
+      <div class="key" data-key="4">4</div>
+      <div class="key" data-key="5">5</div>
+      <div class="key" data-key="6">6</div>
+      <div class="key" data-key="7">7</div>
+      <div class="key" data-key="8">8</div>
+      <div class="key" data-key="9">9</div>
+      <div class="key" data-key="clear">←</div>
+      <div class="key" data-key="0">0</div>
+      <div class="key" data-key="ok">✔</div>
+    </div>
+
+    <div class="helper">
+      <button class="btn-ghost" id="forgotBtn">Lupa PIN?</button>
+      <button class="btn-ghost" id="hintBtn">Petunjuk</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div id="mainScreen" style="display:none;text-align:center;color:white;">
+    <h1>Happy Birthday Sayangku 💖</h1>
+    <p>Semoga panjang umur, sehat selalu, aku sayang kamu 🌸</p>
+  </div>
+
+  <!-- Modal Quiz -->
+  <div id="quizModal" class="modal">
+    <div class="quiz-box">
+      <h3 id="quizQ">Pertanyaan</h3>
+      <input type="text" id="quizAnswer" placeholder="Jawabanmu...">
+      <div id="quizChoices">
+        <button onclick="chooseAnswer('iya')" class="btn-next">Iya</button>
+        <button onclick="chooseAnswer('tidak')" class="btn-cancel">Tidak</button>
+      </div>
+      <p id="quizMsg" class="quiz-msg"></p>
+      <div class="quiz-actions">
+        <button class="btn-cancel" onclick="closeQuiz()">Batal</button>
+        <button class="btn-next" onclick="checkQuiz()">Lanjut</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Petunjuk -->
+  <div id="hintModal" class="modal">
+    <div class="quiz-box">
+      <h3>Petunjuk 🔑</h3>
+      <p style="font-size:14px;line-height:1.4;">
+        Kalau kamu lupa PIN 👉 klik <b>Lupa PIN?</b><br>
+        Jawab pertanyaan yang muncul dengan jujur 💕<br>
+        Kalau semua benar, PIN rahasia akan keluar 🎉
+      </p>
+      <button class="btn-cancel" onclick="closeHint()">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const secretPIN = "2580";
+    let entered = "";
+    const dots = document.querySelectorAll(".dot");
+    const msgEl = document.getElementById("msg");
+    const lockWrap = document.getElementById("lockWrap");
+    const mainScreen = document.getElementById("mainScreen");
+    const quizModal = document.getElementById("quizModal");
+    const quizQ = document.getElementById("quizQ");
+    const quizAnswer = document.getElementById("quizAnswer");
+    const quizMsg = document.getElementById("quizMsg");
+    const quizChoices = document.getElementById("quizChoices");
+
+    const quizData = [
+      { q: "Siapakah nama pasanganmu?", a: "jajat" },
+      { q: "Apakah kmu mencintai dan menyayangi dia?", a: "iya", type: "choice" },
+      { q: "Nama panggilan kesayangan?", a: "mas" },
+      { q: "Apakah kmu mau tau pin nya? (iya/tidak)", a: "iya", type: "choice" },
+    ];
+    let quizStep = 0;
+
+    // PIN logic
+    function updateDots(){dots.forEach((d,i)=>d.classList.toggle("filled",i<entered.length));}
+    function clearEntry(){entered="";updateDots();}
+    function showMessage(t,c="white"){msgEl.textContent=t;msgEl.style.color=c;}
+    function failFeedback(){lockWrap.classList.add("shake");setTimeout(()=>lockWrap.classList.remove("shake"),600);showMessage("PIN salah","#ffe082");setTimeout(()=>{clearEntry();showMessage("");},900);}
+    function successOpen() {
+  // Simpan flag untuk trigger musik
+  sessionStorage.setItem("playMusic", "true");
+  // Redirect ke tampilan
+  window.location.href = "tampilan.html";
+}
+    function submitPIN(){if(entered===secretPIN){successOpen();}else{failFeedback();}}
+
+    document.querySelectorAll(".key").forEach(k=>{
+      k.addEventListener("click",()=>{
+        let key=k.dataset.key;
+        if(key==="clear"){entered=entered.slice(0,-1);updateDots();return;}
+        if(key==="ok"){submitPIN();return;}
+        if(/^\d$/.test(key)&&entered.length<4){entered+=key;updateDots();if(entered.length===4)setTimeout(submitPIN,200);}
+      });
+    });
+
+    // Quiz
+    document.getElementById("forgotBtn").addEventListener("click",()=>startQuiz());
+    function startQuiz(){quizStep=0;quizMsg.textContent="";loadQuestion();quizModal.style.display="flex";}
+    function closeQuiz(){quizModal.style.display="none";}
+    function loadQuestion(){
+      let q = quizData[quizStep];
+      quizQ.textContent = q.q;
+      quizMsg.textContent = "";
+      quizAnswer.value = "";
+      if(q.type==="choice"){quizAnswer.style.display="none";quizChoices.style.display="flex";}
+      else{quizAnswer.style.display="block";quizChoices.style.display="none";}
+    }
+    function checkQuiz(){
+      let q = quizData[quizStep];
+      if(q.type==="choice"){quizMsg.textContent="Pilih jawaban dengan tombol 😘";return;}
+      let ans = quizAnswer.value.trim().toLowerCase();
+      if(ans===q.a){nextStep();}else{wrongAnswer();}
+    }
+    function chooseAnswer(choice){
+      let q = quizData[quizStep];
+      if(choice===q.a){nextStep();}else{wrongAnswer();}
+    }
+    function nextStep(){
+      quizStep++;
+      if(quizStep<quizData.length){loadQuestion();}
+      else{
+        closeQuiz();
+        showMessage("PIN kamu: "+secretPIN,"#caffbf");
+        confetti({particleCount:150,spread:70,origin:{y:0.6}});
+      }
+    }
+    function wrongAnswer(){
+      quizMsg.textContent = "✖ Jawaban salah, coba lagi sayang 😘";
+      quizMsg.classList.add("error");
+      quizAnswer.classList.add("shake");
+      setTimeout(()=>quizAnswer.classList.remove("shake"),600);
+    }
+
+    // Petunjuk
+    document.getElementById("hintBtn").addEventListener("click",()=>openHint());
+    function openHint(){document.getElementById("hintModal").style.display="flex";}
+    function closeHint(){document.getElementById("hintModal").style.display="none";}
+  </script>
+</body>
+</html> 
