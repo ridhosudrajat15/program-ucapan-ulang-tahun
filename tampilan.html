@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -132,6 +133,111 @@
         font-size: 0.9em;
       }
     }
+    /* Popup */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+    .popup-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .popup-box {
+      background: linear-gradient(145deg, #fff0f5, #ffe6f0);
+      padding: 25px;
+      border-radius: 25px;
+      text-align: center;
+      max-width: 300px;
+      position: relative;
+      animation: zoomIn 0.5s ease;
+      border: 2px solid #ff4f6d;
+      box-shadow: 0 8px 25px rgba(255, 77, 109, 0.3);
+      overflow: hidden;
+    }
+    .popup-box h2 {
+      margin-bottom: 15px;
+      font-size: 1.2em;
+      color: #d63384;
+    }
+    .popup-box button {
+      background: #ff4f6d;
+      color: white;
+      margin-top: 10px;
+      border-radius: 20px;
+      padding: 8px 18px;
+    }
+    /* Love besar */
+    .love {
+      width: 35px;
+      height: 35px;
+      background-color: #ff4d6d;
+      position: relative;
+      margin: 0 auto 15px;
+      transform: rotate(-45deg);
+      animation: pulse 1s infinite;
+    }
+    .love:before,
+    .love:after {
+      content: "";
+      width: 35px;
+      height: 35px;
+      background-color: #ff4d6d;
+      border-radius: 50%;
+      position: absolute;
+    }
+    .love:before { top: -17px; left: 0; }
+    .love:after { left: 17px; top: 0; }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1) rotate(-45deg); }
+      50% { transform: scale(1.2) rotate(-45deg); }
+    }
+
+    /* Love kecil beterbangan */
+.heart-mini {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #ff4d6d;
+  transform: rotate(-45deg);
+  animation: float 4s infinite;
+}
+.heart-mini:before, .heart-mini:after {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: #ff4d6d;
+  border-radius: 50%;
+}
+.heart-mini:before { top: -7.5px; left: 0; }
+.heart-mini:after { left: 7.5px; top: 0; }
+
+/* Dari kiri */
+.heart-mini:nth-child(1) { bottom: 0; left: 20%; animation-delay: 0s; }
+.heart-mini:nth-child(2) { bottom: 0; left: 30%; animation-delay: 1s; }
+.heart-mini:nth-child(3) { bottom: 0; left: 40%; animation-delay: 2s; }
+
+/* Dari kanan */
+.heart-mini:nth-child(4) { bottom: 0; right: 20%; animation-delay: 0.5s; }
+.heart-mini:nth-child(5) { bottom: 0; right: 30%; animation-delay: 1.5s; }
+.heart-mini:nth-child(6) { bottom: 0; right: 40%; animation-delay: 2.5s; }
+
+@keyframes float {
+  0% { transform: translateY(0) rotate(-45deg); opacity: 1; }
+  100% { transform: translateY(-120px) rotate(-45deg); opacity: 0; }
+}
+
+
   </style>
 </head>
 <body>
@@ -154,9 +260,27 @@
     <source src="lagu_romantis.mp3" type="audio/mpeg">
   </audio>
 
-  <script>
+  <!-- Popup Overlay -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+      <!-- Love besar -->
+      <div class="love"></div>
 
-   
+      <h2 id="popupText">Popup 1</h2>
+      <button id="popupBtn">Lanjut ➡️</button>
+
+      <!-- Love kecil beterbangan -->
+      <div class="heart-mini"></div>
+      <div class="heart-mini"></div>
+      <div class="heart-mini"></div>
+      <div class="heart-mini"></div>
+      <div class="heart-mini"></div>
+      <div class="heart-mini"></div>
+    </div>
+  </div>
+
+
+  <script>
     // Wave animasi langsung aktif
     const title = document.getElementById("titleText");
     title.classList.add("wave-active");
@@ -222,6 +346,40 @@
       setTimeout(() => balloon.remove(), 8000);
     }
     setInterval(createBalloon, 2000);
+
+    // Popup Logic
+    const popupOverlay = document.getElementById("popupOverlay");
+    const popupText = document.getElementById("popupText");
+    const popupBtn = document.getElementById("popupBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const messages = [
+      "Hai sayangku 💕",
+      "Aku ada sesuatu buatmu ✨",
+      "Tapi janji jangan baper ya 😘",
+      "Karena ini spesial banget… 🎁",
+      "Yuk kita buka bareng 💌"
+    ];
+
+    let popupIndex = 0;
+
+    nextBtn.addEventListener("click", () => {
+      nextBtn.style.display = "none";
+      popupOverlay.classList.add("active");
+      popupText.textContent = messages[popupIndex];
+    });
+
+    popupBtn.addEventListener("click", () => {
+      popupIndex++;
+      if (popupIndex < messages.length) {
+        popupText.textContent = messages[popupIndex];
+        if (popupIndex === messages.length - 1) {
+          popupBtn.textContent = "Buka Surat 💌";
+        }
+      } else {
+        window.location.href = "surat.html";
+      }
+    });
   </script>
 </body> 
 
