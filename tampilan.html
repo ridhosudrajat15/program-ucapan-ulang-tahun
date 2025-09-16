@@ -158,10 +158,11 @@
       text-align: center;
       max-width: 300px;
       position: relative;
-      animation: none;
       border: 2px solid #ff4f6d;
       box-shadow: 0 8px 25px rgba(255, 77, 109, 0.3);
       overflow: hidden;
+      transform: none;   /* pastikan gak ada animasi */
+      animation: none;   /* matikan zoom/goyang */
     }
     .popup-box h2 {
       margin-bottom: 15px;
@@ -356,7 +357,7 @@
     const messages = [
       "Hai sayangku 💕",
       "Aku ada sesuatu buatmu ✨",
-      "Tapi janji jangan baper ya 😘",
+      "Maaf ya aku hanya bisa ngasih ini 😘",
       "Karena ini spesial banget… 🎁",
       "Yuk kita buka bareng 💌"
     ];
@@ -382,7 +383,6 @@
     });
   </script>
 </body> 
-
 
 
 
