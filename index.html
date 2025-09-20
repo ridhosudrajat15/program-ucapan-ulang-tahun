@@ -145,7 +145,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
   <script>
-    const secretPIN = "1530";
+    const secretPIN = "2015";
     let entered = "";
     const dots = document.querySelectorAll(".dot");
     const msgEl = document.getElementById("msg");
@@ -158,9 +158,9 @@
     const quizChoices = document.getElementById("quizChoices");
 
     const quizData = [
-      { q: "Siapakah nama pasanganmu?", a: "-" },
+      { q: "Siapakah nama pasanganmu?", a: "jajat" },
       { q: "Apakah kmu mencintai dan menyayangi dia?", a: "iya", type: "choice" },
-      { q: "Nama panggilan kesayangan?", a: "-" },
+      { q: "Nama panggilan kesayangan?", a: "mas" },
       { q: "Apakah kmu mau tau pin nya?", a: "iya", type: "choice" },
     ];
     let quizStep = 0;
@@ -231,6 +231,4 @@
     function closeHint(){document.getElementById("hintModal").style.display="none";}
   </script>
 </body>
-
 </html> 
-
