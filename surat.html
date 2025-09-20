@@ -62,19 +62,6 @@
       line-height: 1.6;
       min-height: 150px;
     }
-    #lovePhoto {
-      display: block;
-      margin: 15px auto;
-      width: 150px;       /* ✅ ukuran fix */
-      height: auto;       /* ✅ biar proporsional */
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    @media (max-width: 600px) {
-      #lovePhoto {
-        width: 120px;     /* ✅ lebih kecil di HP */
-      }
-    }
     .fromTo {
       margin-top: 20px;
       font-size: 0.9em;
@@ -122,7 +109,6 @@
     <h2>SURAT UNTUKMU</h2>
     <hr />
     <div id="letterText"></div>
-    <img id="lovePhoto" src="" alt="Foto Kenangan" />
     <div class="fromTo">
       <span>From: mas 💕</span>
       <span>To: sayangku 💖</span>
@@ -151,31 +137,38 @@
     });
 
     const letterText = document.getElementById("letterText");
-    const lovePhoto = document.getElementById("lovePhoto");
     const backBtn = document.getElementById("backBtn");
     const nextBtn = document.getElementById("nextBtn");
 
-    // 🔹 Tiga isi surat + foto
+    // 🔹 Tiga isi surat tanpa foto
     const messages = [
       {
         text: `Sayangku tersayang 💖
-
 Selamat ulang tahun 🎂✨, Aku bersyukur banget bisa ada di sampingmu sampai hari ini.
 Semoga di hari spesialmu ini, kamu selalu bahagia, sehat, dan semua doa baikmu terkabul 🌸
-Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`,
-        photo: "foto1.jpeg"
+Kamu itu alasan senyumku setiap hari, penyemangatku di saat aku lelah, dan pelukan hangat yang selalu aku rindukan💖.  
+Aku nggak butuh apapun lagi, asal bisa terus bersamamu,  menemani setiap langkahmu sampai kita tua nanti 🤍 
+Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`
       },
       {
         text: `Kamu itu hadiah terindah yang Tuhan kasih untukku ✨
-Setiap senyummu bikin hariku lebih berwarna 🌈
-Aku janji akan selalu jagain kamu, apapun yang terjadi 💖`,
-        photo: "foto2.jpg"
+Setiap senyummu bikin hariku lebih berwarna 🌈  
+Kamu adalah alasan aku semangat setiap pagi, dan doa terakhirku sebelum tidur di malam hari 🌙💕  
+Aku ingin kamu tahu, tidak ada satu pun yang bisa menggantikanmu di hatiku.  
+Setiap detik bersamamu adalah anugerah, setiap tatapanmu membuatku merasa menjadi orang paling beruntung di dunia ini 🌹  
+
+Aku mencintaimu bukan hanya dengan kata,tapi dengan seluruh hatiku, jiwaku, dan nafasku.  
+Jika ada seribu alasan untuk menyerah, maka aku akan menemukan sejuta alasan untuk tetap bersamamu selamanya 💞
+Aku janji akan selalu jagain kamu, apapun yang terjadi 💖`
       },
       {
-        text: `Di akhir surat ini, aku cuma mau bilang...
-Terima kasih sudah ada untukku, selalu sabar, selalu sayang 🥺💕
-Aku ingin terus bersamamu selamanya 💞`,
-        photo: "foto3.jpg"
+        text: `Terima kasih, sayang, sudah mau hadir dalam hidupku. Terima kasih sudah sabar, sudah mengerti aku, sudah sayang sama aku meski aku jauh dari sempurna 🥺💕. 
+        Aku belajar banyak darimu, tentang kesabaran, ketulusan, dan arti cinta yang sesungguhnya. 
+        Sekarang ini, di akhir surat ini, aku cuma mau bilang... Aku ingin kita terus berjalan bersama sampai tua nanti.
+        Aku ingin jadi alasan kamu tersenyum setiap pagi, orang yang kamu rindukan tiap malam 🌙, dan rumah yang selalu kamu pulangin kapanpun kamu merasa lelah.
+        Aku cinta kamu, bukan cuma untuk hari ini, tapi untuk esok, lusa, dan selamanya. Selama Tuhan masih kasih aku kesempatan hidup, aku akan selalu memilih kamu, mencintaimu, dan berjuang untuk kita 💞✨
+        Selamat ulang tahun cintaku, semoga hari ini seindah hatimu dan malam ini sehangat pelukan kita 💕aku ingin terus bersamamu selamanya 💞`
+        
       }
     ];
 
@@ -197,7 +190,6 @@ Aku ingin terus bersamamu selamanya 💞`,
 
     function showLetter(i) {
       typingEffect(messages[i].text);
-      lovePhoto.src = messages[i].photo;
     }
 
     showLetter(index);
