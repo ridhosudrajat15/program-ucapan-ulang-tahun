@@ -27,35 +27,33 @@
       max-width: 600px;
       width: 90%;
       padding: 30px;
-      border-radius: 12px;
+      border-radius: 15px;
       box-shadow: 0 6px 20px rgba(0,0,0,0.4);
       text-align: left;
       position: relative;
       font-family: "Georgia", serif;
+      border: 2px solid #ff99aa;
       animation: zoomIn 0.5s ease forwards;
     }
     #loveLetter::before, 
     #loveLetter::after {
-      content: "";
+      content: "💌";
       position: absolute;
+      font-size: 24px;
       top: -20px;
-      width: 60px;
-      height: 30px;
-      background: #f7f7f7;
-      border: 2px solid #ccc;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
-    #loveLetter::before { left: 20px; transform: rotate(-10deg); }
-    #loveLetter::after { right: 20px; transform: rotate(10deg); }
+    #loveLetter::before { left: 20px; }
+    #loveLetter::after { right: 20px; }
 
     #loveLetter h2 {
       margin: 0;
       text-align: center;
       font-family: "Poppins", sans-serif;
+      color: #d6336c;
     }
     #loveLetter hr {
       border: none;
-      border-top: 2px solid #000;
+      border-top: 2px dashed #d6336c;
       margin: 10px 0 20px;
     }
     #letterText {
@@ -64,16 +62,27 @@
       line-height: 1.6;
       min-height: 150px;
     }
+    #lovePhoto {
+      display: block;
+      margin: 15px auto;
+      max-width: 200px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
     .fromTo {
       margin-top: 20px;
       font-size: 0.9em;
       font-style: italic;
       display: flex;
       justify-content: space-between;
+      color: #555;
     }
-    #closeBtn {
-      display: block;
-      margin: 20px auto 0;
+    .controls {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
       padding: 10px 20px;
       border: none;
       border-radius: 10px;
@@ -84,9 +93,14 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       transition: 0.3s;
     }
-    #closeBtn:hover {
+    button:hover {
       background: #e91e63;
       transform: scale(1.05);
+    }
+    button:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+      transform: none;
     }
 
     /* Animasi */
@@ -102,56 +116,112 @@
     <h2>SURAT UNTUKMU</h2>
     <hr />
     <div id="letterText"></div>
+    <img id="lovePhoto" src="" alt="Foto Kenangan" />
     <div class="fromTo">
       <span>From: mas 💕</span>
       <span>To: sayangku 💖</span>
     </div>
-    <button id="closeBtn">Tutup Surat ✨</button>
+    <div class="controls">
+      <button id="backBtn" disabled>⬅️ Back</button>
+      <button id="nextBtn">Next ➡️</button>
+    </div>
   </div>
-<audio id="bgMusic" loop>
-  <source src="romantis1.mp3" type="audio/mpeg">
-</audio>
+
+  <audio id="bgMusic" loop>
+    <source src="romantis1.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
+    const music = document.getElementById("bgMusic");
 
-     const music = document.getElementById("bgMusic");
+    window.addEventListener("load", () => {
+      const shouldPlay = sessionStorage.getItem("playMusic");
+      if (shouldPlay === "true") {
+        music.play().catch(() => {
+          console.log("Autoplay diblokir, butuh interaksi manual.");
+        });
+        sessionStorage.removeItem("playMusic"); 
+      }
+    });
 
-  window.addEventListener("load", () => {
-    const shouldPlay = sessionStorage.getItem("playMusic");
-    if (shouldPlay === "true") {
-      music.play().catch(() => {
-        console.log("Autoplay diblokir, butuh interaksi manual.");
-      });
-      sessionStorage.removeItem("playMusic"); // reset biar gak looping
-    }
-  });
-    const loveLetter = document.getElementById("loveLetter");
     const letterText = document.getElementById("letterText");
-    const closeBtn = document.getElementById("closeBtn");
+    const lovePhoto = document.getElementById("lovePhoto");
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
 
-    const message = `Sayangku tersayang 💖
+    // 🔹 Tiga isi surat + foto
+    const messages = [
+      {
+        text: `Sayangku tersayang 💖
 
 Selamat ulang tahun 🎂✨, Aku bersyukur banget bisa ada di sampingmu sampai hari ini.
 Semoga di hari spesialmu ini, kamu selalu bahagia, sehat, dan semua doa baikmu terkabul 🌸
-Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`;
+Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`,
+        photo: "foto1.jpeg"
+      },
+      {
+        text: `Kamu itu hadiah terindah yang Tuhan kasih untukku ✨
+Setiap senyummu bikin hariku lebih berwarna 🌈
+Aku janji akan selalu jagain kamu, apapun yang terjadi 💖`,
+        photo: "foto2.jpg"
+      },
+      {
+        text: `Di akhir surat ini, aku cuma mau bilang...
+Terima kasih sudah ada untukku, selalu sabar, selalu sayang 🥺💕
+Aku ingin terus bersamamu selamanya 💞`,
+        photo: "foto3.jpg"
+      }
+    ];
 
-    // Efek mengetik
+    let index = 0;
     let i = 0;
-    function typing() {
-      if (i < message.length) {
-        letterText.innerHTML += message.charAt(i);
-        i++;
-        setTimeout(typing, 50);
+
+    function typingEffect(msg) {
+      letterText.innerHTML = "";
+      i = 0;
+      function typing() {
+        if (i < msg.length) {
+          letterText.innerHTML += msg.charAt(i);
+          i++;
+          setTimeout(typing, 50);
+        }
+      }
+      typing();
+    }
+
+    function showLetter(i) {
+      typingEffect(messages[i].text);
+      lovePhoto.src = messages[i].photo;
+    }
+
+    showLetter(index);
+
+    function updateButtons() {
+      backBtn.disabled = index === 0;
+      if (index === messages.length - 1) {
+        nextBtn.textContent = "Tutup Surat ✨";
+      } else {
+        nextBtn.textContent = "Next ➡️";
       }
     }
-    typing();
 
-    // Tombol tutup balik ke halaman utama
-    closeBtn.addEventListener("click", () => {
-      window.location.href = "tampilan.html"; // ganti sesuai file utama
+    backBtn.addEventListener("click", () => {
+      if (index > 0) {
+        index--;
+        showLetter(index);
+        updateButtons();
+      }
     });
 
-    
+    nextBtn.addEventListener("click", () => {
+      if (index < messages.length - 1) {
+        index++;
+        showLetter(index);
+        updateButtons();
+      } else {
+        window.location.href = "tampilan.html"; 
+      }
+    });
   </script>
 </body>
 </html>
