@@ -103,24 +103,36 @@
     <hr />
     <div id="letterText"></div>
     <div class="fromTo">
-      <span>From: Aku 💕</span>
-      <span>To: Kamu 💖</span>
+      <span>From: mas 💕</span>
+      <span>To: sayangku 💖</span>
     </div>
     <button id="closeBtn">Tutup Surat ✨</button>
   </div>
+<audio id="bgMusic" loop>
+  <source src="romantis1.mp3" type="audio/mpeg">
+</audio>
 
   <script>
+
+     const music = document.getElementById("bgMusic");
+
+  window.addEventListener("load", () => {
+    const shouldPlay = sessionStorage.getItem("playMusic");
+    if (shouldPlay === "true") {
+      music.play().catch(() => {
+        console.log("Autoplay diblokir, butuh interaksi manual.");
+      });
+      sessionStorage.removeItem("playMusic"); // reset biar gak looping
+    }
+  });
     const loveLetter = document.getElementById("loveLetter");
     const letterText = document.getElementById("letterText");
     const closeBtn = document.getElementById("closeBtn");
 
     const message = `Sayangku tersayang 💖
 
-Selamat ulang tahun 🎂✨
-Aku bersyukur banget bisa ada di sampingmu sampai hari ini.
-
+Selamat ulang tahun 🎂✨, Aku bersyukur banget bisa ada di sampingmu sampai hari ini.
 Semoga di hari spesialmu ini, kamu selalu bahagia, sehat, dan semua doa baikmu terkabul 🌸
-
 Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`;
 
     // Efek mengetik
@@ -138,6 +150,8 @@ Aku mencintaimu selalu, hari ini, esok, dan selamanya 💕`;
     closeBtn.addEventListener("click", () => {
       window.location.href = "tampilan.html"; // ganti sesuai file utama
     });
+
+    
   </script>
 </body>
 </html>
