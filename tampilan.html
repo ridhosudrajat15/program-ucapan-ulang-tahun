@@ -360,10 +360,15 @@
 
     const messages = [
       "Hai sayangku 💕",
+      "Ciee yang hari ini ulang tahun 😘",
+      "Aku harap di hari spesial kmuini selalu bahagia yaa.. 😘",
       "Aku ada sesuatu buatmu ✨",
       "Maaf ya aku hanya bisa ngasih ini 😘",
       "Karena ini spesial banget… 🎁",
-      "Yuk kita buka bareng 💌"
+      "Yuk kita buka bareng 💌",
+      "Tapi jangan kaget ya 😍",
+       "Aku sayang banget sama kamu 💖"
+      
     ];
 
     let popupIndex = 0;
@@ -382,6 +387,7 @@
           popupBtn.textContent = "Buka Surat 💌";
         }
       } else {
+        sessionStorage.setItem("playMusic", "true"); // simpan flag
         window.location.href = "surat.html";
       }
     });
